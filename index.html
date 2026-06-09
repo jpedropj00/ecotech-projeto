@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EcoTech - Umidade</title>
-  <!-- jsPDF: geração de PDF 100% no navegador, sem precisar da API -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <style>
@@ -51,7 +50,6 @@
     .config button:hover { background: #3ec46f; }
     .empty { color: #8a9bb3; text-align: center; padding: 20px; }
 
-    /* ── Export bar ── */
     .export-bar {
       display: flex;
       gap: 10px;
@@ -83,7 +81,6 @@
     .btn-sheets { background: #3b82f6; color: #fff; }
     .btn-sheets:hover:not(:disabled) { background: #2563eb; }
 
-    /* ── Google Sheets panel ── */
     .sheets-panel {
       display: none;
       background: #1a2540;
@@ -123,7 +120,7 @@
     <!-- API config -->
     <div class="config">
       <label for="url">Endereço da API</label>
-      <input id="url" type="text" value="http://192.168.0.110:5000" />
+      <input id="url" type="text" value="http://192.168.137.97:5000" />
       <button onclick="salvarUrl()">Conectar</button>
     </div>
 
@@ -177,8 +174,7 @@
   </div>
 
   <script>
-    let API_BASE_URL = "http://192.168.0.110:5000";
-    // Cache dos dados para usar na exportação sem nova requisição
+    let API_BASE_URL = "http://192.168.137.97:5000";
     let dadosCache = [];
 
     function salvarUrl() {
@@ -205,7 +201,7 @@
         document.getElementById("atual").textContent = ultima.umidade;
         document.getElementById("dataAtual").textContent = ultima.data_hora;
         const todos = await buscarTodos();
-        dadosCache = todos; // salva para exportação
+        dadosCache = todos;
         renderHistorico(todos);
         status.textContent = "● Conectado";
         status.className = "status ok";
@@ -230,7 +226,6 @@
       div.innerHTML = html;
     }
 
-    // ── PDF gerado 100% no navegador (jsPDF + autoTable) ─────────────────────
     function exportarPDF() {
       if (dadosCache.length === 0) {
         alert("Nenhum dado disponível. Conecte-se à API primeiro.");
@@ -248,21 +243,19 @@
         const pageW = doc.internal.pageSize.getWidth();
         const agora = new Date().toLocaleString("pt-BR");
 
-        // ── Cabeçalho ──
-        doc.setFillColor(26, 37, 64);           // #1a2540
+        doc.setFillColor(26, 37, 64);
         doc.rect(0, 0, pageW, 28, "F");
 
-        doc.setTextColor(74, 222, 128);          // #4ade80
+        doc.setTextColor(74, 222, 128);
         doc.setFontSize(16);
         doc.setFont("helvetica", "bold");
         doc.text("EcoTech — Relatório de Umidade", 14, 13);
 
-        doc.setTextColor(138, 155, 179);         // #8a9bb3
+        doc.setTextColor(138, 155, 179);
         doc.setFontSize(8);
         doc.setFont("helvetica", "normal");
         doc.text(`Gerado em: ${agora}   |   Total de registros: ${dadosCache.length}`, 14, 22);
 
-        // ── Tabela ──
         const linhas = [...dadosCache].reverse().map((r, i) => [
           i + 1,
           r.data_hora,
@@ -294,7 +287,6 @@
           tableLineWidth: 0.3,
         });
 
-        // ── Rodapé ──
         const totalPages = doc.internal.getNumberOfPages();
         for (let p = 1; p <= totalPages; p++) {
           doc.setPage(p);
@@ -318,14 +310,12 @@
       }
     }
 
-    // ── CSV gerado no navegador e baixado diretamente ─────────────────────────
     function exportarCSV() {
       if (dadosCache.length === 0) {
         alert("Nenhum dado disponível. Conecte-se à API primeiro.");
         return;
       }
 
-      // BOM UTF-8 para o Google Sheets reconhecer acentos
       let csv = "\uFEFFData / Hora,Umidade (%)\n";
       for (const row of dadosCache) {
         csv += `${row.data_hora},${row.umidade}\n`;
@@ -340,7 +330,6 @@
       URL.revokeObjectURL(url);
     }
 
-    // ── Google Sheets via API Flask ───────────────────────────────────────────
     function toggleSheets() {
       document.getElementById("sheetsPanel").classList.toggle("visible");
     }

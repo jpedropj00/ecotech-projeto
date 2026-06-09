@@ -3,7 +3,7 @@ import random
 import time
 
 
-API_URL = "http://192.168.0.110:5000"
+API_URL = "http://192.168.137.97:5000"
 
 
 QUANTIDADE = 20
