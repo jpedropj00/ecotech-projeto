@@ -1,7 +1,13 @@
 import requests
 import random
 import time
+
+
+<<<<<<<< HEAD:app/api/popular_dados.py
 API_URL = "http://localhost:5000"
+========
+API_URL = "http://192.168.137.97:5000"
+>>>>>>>> c4b7eb2fde4e8ab1732a74f9160010964ac847c3:data/popular_dados.py
 
 
 QUANTIDADE = 20
