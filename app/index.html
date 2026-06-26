@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EcoTech - Umidade</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+    <link
+      rel="shortcut icon"
+      href="imgs/logoEcoTech.jpeg"
+      type="image/x-icon"
+    />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>EcoTech — Umidade</h1>
+      <p class="sub">Captando dados da API a cada 5 segundos</p>
+
+      <!-- API config -->
+      <div class="config">
+        <label for="url">Endereço da API</label>
+        <input id="url" type="text" value="http://192.168.137.97:5000" />
+        <button onclick="salvarUrl()">Conectar</button>
+      </div>
+
+      <!-- Leitura atual -->
+      <div class="card">
+        <div class="card-title">Umidade atual</div>
+        <div class="valor">
+          <span id="atual">--</span><span class="pct">%</span>
+        </div>
+        <div class="data" id="dataAtual"></div>
+        <div class="status" id="status"></div>
+      </div>
+
+      <!-- Exportar -->
+      <div class="export-bar">
+        <button class="btn-export btn-pdf" onclick="exportarPDF()" id="btnPdf">
+          ⬇ Exportar PDF
+        </button>
+        <button class="btn-export btn-csv" onclick="exportarCSV()" id="btnCsv">
+          📄 Baixar CSV
+        </button>
+        <button
+          class="btn-export btn-sheets"
+          onclick="toggleSheets()"
+          id="btnSheets"
+        >
+          🔗 Google Sheets
+        </button>
+      </div>
+
+      <!-- Google Sheets panel -->
+      <div class="sheets-panel" id="sheetsPanel">
+        <h3>Enviar para Google Sheets</h3>
+        <div class="tip">
+          <strong>Como configurar:</strong><br />
+          1. Acesse
+          <a href="https://console.cloud.google.com" target="_blank"
+            >console.cloud.google.com</a
+          ><br />
+          2. Crie um projeto → ative a <strong>Google Sheets API</strong><br />
+          3. Crie uma <strong>Service Account</strong> → baixe o JSON de
+          credenciais<br />
+          4. Compartilhe sua planilha com o e-mail da service account<br />
+          5. Cole o ID da planilha (da URL) e o JSON abaixo
+        </div>
+        <label for="sheetId">ID da Planilha</label>
+        <input
+          id="sheetId"
+          type="text"
+          placeholder="Ex: 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms"
+        />
+        <label for="credJson">JSON de Credenciais (Service Account)</label>
+        <textarea
+          id="credJson"
+          rows="5"
+          placeholder='{"type":"service_account","project_id":"...","private_key":"...","client_email":"..."}'
+        ></textarea>
+        <button
+          class="btn-export btn-sheets"
+          style="width: 100%; margin-top: 12px"
+          onclick="enviarSheets()"
+        >
+          Enviar dados para a planilha
+        </button>
+        <div id="sheetsMsg"></div>
+      </div>
+
+      <!-- Histórico -->
+      <div class="card">
+        <div class="card-title">Histórico</div>
+        <div id="historico">
+          <p class="empty">Aguardando dados...</p>
+        </div>
+      </div>
+    </div>
+    <script src="index.js"></script>
+  </body>
+</html>

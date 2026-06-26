@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoTech — Dashboard PDF</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <link rel="shortcut icon" href="../imgs/logoEcoTech.jpeg" type="image/x-icon">
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header">
+      <div>
+        <h1>EcoTech — Dashboard</h1>
+        <p>Visualização e exportação de relatório PDF</p>
+      </div>
+    </div>
+
+    <div class="conn">
+      <div>
+        <label for="apiUrl">Endereço da API</label>
+        <input id="apiUrl" value="http://192.168.137.97:5000" />
+      </div>
+      <button class="btn-conn" onclick="conectar()">Conectar</button>
+    </div>
+
+    <div class="status-bar" id="statusBar"></div>
+
+    <div class="cards" id="cards">
+      <div class="card">
+        <div class="label">Aguardando</div>
+        <div class="value c-green">--</div>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="title">Histórico de leituras</div>
+      <canvas id="grafico"></canvas>
+    </div>
+
+    <div class="table-card">
+      <div class="title">Últimas 15 leituras</div>
+      <div id="tabelaDiv">
+        <p class="empty">Aguardando dados...</p>
+      </div>
+    </div>
+
+    <button class="btn-pdf" id="btnPdf" onclick="gerarPDF()" disabled>
+      📄 Gerar PDF do Dashboard
+    </button>
+  </div>
+  <script src="dashboard.js"></script>
+</body>
+</html>

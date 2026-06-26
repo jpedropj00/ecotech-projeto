@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoTech Solutions</title>
+  <link rel="stylesheet" href="login.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <link rel="shortcut icon" href="../imgs/logoEcoTech.jpeg" type="image/x-icon">
+</head>
+
+<body>
+
+  <!-- ══════════════════════════════════════
+     TELA DE LOGIN
+══════════════════════════════════════ -->
+  <div id="loginScreen">
+    <div class="login-box">
+      <div class="login-logo">
+        <img src="../imgs/logoEcoTech.jpeg" alt="EcoTech"
+          style="width:100%;height:100%;object-fit:cover;border-radius:9px" />
+      </div>
+      <div>
+        <div class="sidebar-logo-text">EcoTech</div>
+        <div class="sidebar-logo-sub">Monitoramento IoT</div>
+      </div>
+    </div>
+
+    <div class="sidebar-nav">
+      <div class="nav-section-label">Principal</div>
+      <div class="nav-item active" onclick="irPara('overview', this)">
+        <span class="nav-item-icon">🏠</span> Visão Geral
+      </div>
+      <div class="nav-item" onclick="irPara('dashboard', this)">
+        <span class="nav-item-icon">📊</span> Dashboard
+      </div>
+
+      <div class="nav-section-label" style="margin-top:8px">Gestão</div>
+      <div class="nav-item" onclick="irPara('monitor', this)">
+        <span class="nav-item-icon">💧</span> Monitor
+      </div>
+      <div class="nav-item" onclick="irPara('plantas', this)">
+        <span class="nav-item-icon">🌿</span> Plantas
+        <span class="nav-badge" id="navBadgePlantas">0</span>
+      </div>
+
+      <div class="nav-section-label" style="margin-top:8px">Sistema</div>
+      <div class="nav-item" onclick="irPara('config', this)">
+        <span class="nav-item-icon">⚙️</span> Configurações
+      </div>
+    </div>
+
+    <div class="sidebar-bottom">
+      <div class="sidebar-user">
+        <div class="user-avatar" id="userAvatar">AD</div>
+        <div class="user-info">
+          <div class="user-name" id="userName">Admin</div>
+          <div class="user-role">Administrador</div>
+        </div>
+        <button class="logout-btn" onclick="logout()" title="Sair">⏏</button>
+      </div>
+    </div>
+    </nav>
+
+    <!-- MAIN -->
+    <div class="main">
+
+      <!-- TOPBAR -->
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div class="hamburger" id="hamburger" onclick="toggleSidebar()">
+            <span></span><span></span><span></span>
+          </div>
+          <div>
+            <div class="topbar-title" id="topbarTitle">Visão Geral</div>
+            <div class="topbar-sub" id="topbarSub">Resumo do sistema</div>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="status-dot" id="statusDot"></div>
+          <span style="font-size:.78rem;color:var(--muted)" id="statusText">Desconectado</span>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: VISÃO GERAL ══ -->
+      <div class="page active" id="page-overview">
+        <div class="overview-grid" id="ovGrid">
+          <div class="overview-card">
+            <div class="ov-label">Umidade Atual</div>
+            <div class="ov-value c-green" id="ovAtual">--<span class="ov-unit">%</span></div>
+            <div class="ov-sub">Última leitura</div>
+          </div>
+          <div class="overview-card">
+            <div class="ov-label">Total de Leituras</div>
+            <div class="ov-value c-blue" id="ovTotal">--</div>
+            <div class="ov-sub">Registros no histórico</div>
+          </div>
+          <div class="overview-card">
+            <div class="ov-label">Plantas Cadastradas</div>
+            <div class="ov-value c-pink" id="ovPlantas">0</div>
+            <div class="ov-sub">Monitoradas</div>
+          </div>
+          <div class="overview-card">
+            <div class="ov-label">Planta Ativa</div>
+            <div class="ov-value" style="font-size:1.4rem;margin-top:4px" id="ovPlantaAtiva">—</div>
+            <div class="ov-sub" id="ovPlantaSub">Nenhuma selecionada</div>
+          </div>
+        </div>
+
+        <!-- mini gráfico overview -->
+        <div class="section-title">Histórico recente</div>
+        <div class="chart-card" style="margin-bottom:0">
+          <div class="title">Últimas leituras</div>
+          <canvas id="graficoOv"></canvas>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: DASHBOARD ══ -->
+      <div class="page" id="page-dashboard">
+        <div class="section-title">Conexão</div>
+        <div class="conn-row">
+          <div>
+            <label for="apiUrl">Endereço da API</label>
+            <input id="apiUrl" value="http://172.20.10.4:5000" />
+          </div>
+          <button class="btn btn-green" onclick="conectar()">Conectar</button>
+        </div>
+        <div class="status-bar" id="statusBar"></div>
+
+        <div class="section-title">Estatísticas</div>
+        <div class="stats-grid" id="statsCards">
+          <div class="stat-card">
+            <div class="label">Aguardando</div>
+            <div class="value c-green">--</div>
+          </div>
+        </div>
+
+        <div class="section-title">Gráfico</div>
+        <div class="chart-card">
+          <div class="title">Histórico de leituras</div>
+          <canvas id="graficoDash"></canvas>
+          <div class="chart-legend" id="chartLegend">
+            <span><span class="legend-dot" style="background:#4ade80"></span>Umidade</span>
+          </div>
+        </div>
+
+        <div class="section-title">Tabela</div>
+        <div class="table-wrap">
+          <div class="title">Últimas 15 leituras</div>
+          <div id="tabelaDiv">
+            <p class="empty">Aguardando dados...</p>
+          </div>
+        </div>
+
+        <button class="btn-pdf" id="btnPdf" onclick="gerarPDF()" disabled>
+          📄 Gerar Relatório PDF
+        </button>
+      </div>
+
+      <!-- ══ PAGE: MONITOR ══ -->
+      <div class="page" id="page-monitor">
+
+        <!-- banner planta ativa -->
+        <div class="planta-banner sem-planta" id="monBanner">
+          <div class="planta-banner-icon">🪴</div>
+          <div class="planta-banner-info">
+            <div class="planta-banner-nome" style="color:var(--muted)">Nenhuma planta selecionada</div>
+            <div class="planta-banner-especie">Vá em Plantas e selecione uma para monitorar</div>
+          </div>
+          <span class="planta-banner-alerta alerta-none">— sem dados —</span>
+        </div>
+
+        <!-- seletor rápido de planta -->
+        <div class="section-title">Selecionar planta</div>
+        <div class="card" style="margin-bottom:18px">
+          <div class="plant-grid" id="monPlantGrid">
+            <p class="no-plants">Nenhuma planta cadastrada.</p>
+          </div>
+          <button class="btn btn-blue btn-sm"
+            onclick="irPara('plantas', document.querySelector('[onclick*=plantas]'))">+ Gerenciar plantas</button>
+        </div>
+
+        <!-- cards stats -->
+        <div class="section-title">Estatísticas</div>
+        <div class="cards" id="monCards">
+          <div class="card">
+            <div class="label">Aguardando</div>
+            <div class="value c-green">--</div>
+          </div>
+        </div>
+
+        <!-- gráfico com faixa ideal -->
+        <div class="section-title">Gráfico</div>
+        <div class="chart-card">
+          <div class="title">Histórico com faixa ideal</div>
+          <canvas id="graficoMon"></canvas>
+          <div class="chart-legend" id="legendaMon">
+            <span><span class="legend-dot" style="background:#4ade80"></span>Umidade</span>
+          </div>
+        </div>
+
+        <!-- tabela -->
+        <div class="section-title">Tabela</div>
+        <div class="table-wrap">
+          <div class="title">Últimas 15 leituras</div>
+          <div id="monTabelaDiv">
+            <p class="empty">Aguardando dados...</p>
+          </div>
+        </div>
+
+        <!-- botão PDF -->
+        <button class="btn-pdf" id="monBtnPdf" onclick="gerarPDFMonitor()" disabled style="margin-bottom:24px">
+          📄 Gerar Relatório PDF
+        </button>
+      </div>
+
+      <!-- ══ PAGE: PLANTAS ══ -->
+      <div class="page" id="page-plantas">
+        <div class="planta-banner sem-planta" id="plantaBanner">
+          <div class="planta-banner-icon">🪴</div>
+          <div class="planta-banner-info">
+            <div class="planta-banner-nome" style="color:var(--muted)">Nenhuma planta selecionada</div>
+            <div class="planta-banner-especie">Selecione uma planta abaixo para monitorar</div>
+          </div>
+          <span class="planta-banner-alerta alerta-none">— sem dados —</span>
+        </div>
+
+        <div class="section-title">Plantas cadastradas</div>
+        <div class="card" style="margin-bottom:18px">
+          <div class="plant-grid" id="plantGrid">
+            <p class="no-plants">Nenhuma planta cadastrada ainda.</p>
+          </div>
+          <button class="btn btn-blue btn-sm" onclick="abrirModalPlanta()">+ Cadastrar planta</button>
+        </div>
+
+        <div class="section-title">Leituras desta planta</div>
+        <div class="chart-card">
+          <div class="title">Histórico com faixa ideal</div>
+          <canvas id="graficoPlanta"></canvas>
+          <div class="chart-legend" id="legendaPlanta">
+            <span><span class="legend-dot" style="background:#4ade80"></span>Umidade</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PAGE: CONFIGURAÇÕES ══ -->
+      <div class="page" id="page-config">
+        <div class="section-title">API</div>
+        <div class="card config-section">
+          <div class="config-row">
+            <div class="config-row-info">
+              <h3>Endereço da API</h3>
+              <p>URL do servidor Flask com o sensor ESP32</p>
+            </div>
+            <input class="config-input" id="cfgApi" value="http://172.20.10.4:5000" />
+          </div>
+          <div class="config-row">
+            <div class="config-row-info">
+              <h3>Intervalo de atualização</h3>
+              <p>A cada quantos segundos buscar novos dados</p>
+            </div>
+            <input class="config-input" id="cfgIntervalo" type="number" value="10" min="3" max="60" />
+          </div>
+          <div style="margin-top:12px">
+            <button class="btn btn-green btn-sm" onclick="salvarConfig()">Salvar configurações</button>
+            <span id="cfgMsg"
+              style="font-size:.78rem;color:var(--accent);margin-left:12px;opacity:0;transition:.3s"></span>
+          </div>
+        </div>
+
+        <div class="section-title">Conta</div>
+        <div class="card config-section">
+          <div class="config-row">
+            <div class="config-row-info">
+              <h3>Usuário logado</h3>
+              <p>Conta ativa no momento</p>
+            </div>
+            <span style="font-size:.85rem;color:var(--accent)" id="cfgUserName">admin</span>
+          </div>
+          <div class="config-row">
+            <div class="config-row-info">
+              <h3>Sair do sistema</h3>
+              <p>Encerra a sessão e volta para o login</p>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="logout()">Sair</button>
+          </div>
+        </div>
+
+        <div class="section-title">Dados</div>
+        <div class="card config-section">
+          <div class="config-row">
+            <div class="config-row-info">
+              <h3>Plantas cadastradas</h3>
+              <p>Apaga todas as plantas salvas no navegador</p>
+            </div>
+            <button class="btn btn-danger btn-sm" onclick="limparPlantas()">Limpar plantas</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /appShell -->
+
+  <!-- MODAL PLANTA -->
+  <div class="modal-overlay" id="modalPlanta">
+    <div class="modal">
+      <h2>🌿 Cadastrar nova planta</h2>
+      <div class="form-group">
+        <label>Nome da planta</label>
+        <input id="mNome" type="text" placeholder="Ex: Tomate, Alface, Orquídea..." />
+      </div>
+      <div class="form-group">
+        <label>Espécie / Variedade</label>
+        <input id="mEspecie" type="text" placeholder="Ex: Solanum lycopersicum..." />
+        <div class="form-hint">Nome científico ou variedade específica</div>
+      </div>
+      <div class="form-group">
+        <label>Ícone</label>
+        <select id="mIcone">
+          <option value="🍅">🍅 Tomate</option>
+          <option value="🥬">🥬 Folhosa</option>
+          <option value="🌸">🌸 Flor</option>
+          <option value="🌵">🌵 Cacto</option>
+          <option value="🪴">🪴 Vaso</option>
+          <option value="🌿">🌿 Erva</option>
+          <option value="🫘">🫘 Leguminosa</option>
+          <option value="🌾">🌾 Cereal</option>
+          <option value="🍋">🍋 Cítrica</option>
+          <option value="🌱">🌱 Muda</option>
+          <option value="🍃">🍃 Outra</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Umidade mínima ideal (%)</label>
+          <input id="mMin" type="number" min="0" max="100" value="40" />
+        </div>
+        <div class="form-group">
+          <label>Umidade máxima ideal (%)</label>
+          <input id="mMax" type="number" min="0" max="100" value="70" />
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="fecharModalPlanta()">Cancelar</button>
+        <button class="btn btn-green" onclick="salvarPlanta()">Salvar</button>
+      </div>
+    </div>
+  </div>
+  <script src="login.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoTech — Dashboard</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <link rel="stylesheet" href="planta.css">
+  <link rel="shortcut icon" href="../imgs/logoEcoTech.jpeg" type="image/x-icon">
+</head>
+
+<body>
+<div class="wrap">
+  <!-- header -->
+  <div class="header">
+    <div class="header-logo">
+      <div class="logo-icon">🌱</div>
+      <div>
+        <h1>EcoTech — Dashboard</h1>
+        <p>Monitoramento de umidade por planta</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- conexão -->
+  <div class="section-title">Conexão com a API</div>
+  <div class="conn">
+    <div>
+      <label for="apiUrl">Endereço da API</label>
+      <input id="apiUrl" value="http://192.168.137.97:5000"/>
+    </div>
+    <button class="btn btn-green" onclick="conectar()">Conectar</button>
+  </div>
+  <div class="status-bar" id="statusBar"></div>
+
+  <!-- seletor de planta -->
+  <div class="section-title">Plantas cadastradas</div>
+  <div class="plant-selector">
+    <div class="plant-grid" id="plantGrid">
+      <p class="no-plants">Nenhuma planta cadastrada ainda.</p>
+    </div>
+    <button class="btn btn-blue btn-sm" onclick="abrirModal()">+ Cadastrar planta</button>
+  </div>
+
+  <!-- banner planta ativa -->
+  <div class="planta-banner sem-planta" id="plantaBanner">
+    <div class="planta-banner-icon">🪴</div>
+    <div class="planta-banner-info">
+      <div class="planta-banner-nome" style="color:var(--muted)">Nenhuma planta selecionada</div>
+      <div class="planta-banner-especie">Selecione uma planta acima para monitorar</div>
+    </div>
+    <span class="planta-banner-alerta alerta-none">— sem dados —</span>
+  </div>
+
+  <!-- cards de stats -->
+  <div class="section-title">Estatísticas</div>
+  <div class="cards" id="cards">
+    <div class="card"><div class="label">Aguardando</div><div class="value c-green">--</div></div>
+  </div>
+
+  <!-- gráfico de linha -->
+  <div class="chart-card">
+    <div class="title">Histórico de leituras</div>
+    <canvas id="grafico"></canvas>
+    <div class="chart-legend" id="chartLegend">
+      <span><span class="legend-dot" style="background:#4ade80"></span>Umidade</span>
+    </div>
+  </div>
+
+  <!-- tabela últimas leituras -->
+  <div class="table-card">
+    <div class="title">Últimas 15 leituras</div>
+    <div id="tabelaDiv"><p class="empty">Aguardando dados...</p></div>
+  </div>
+
+  <!-- botão PDF -->
+  <button class="btn-pdf" id="btnPdf" onclick="gerarPDF()" disabled>
+    📄 Gerar Relatório PDF
+  </button>
+
+</div>
+
+<!-- ── MODAL CADASTRO DE PLANTA ── -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h2>🌿 Cadastrar nova planta</h2>
+
+    <div class="form-group">
+      <label>Nome da planta</label>
+      <input id="mNome" type="text" placeholder="Ex: Tomate, Alface, Orquídea..."/>
+    </div>
+
+    <div class="form-group">
+      <label>Espécie / Variedade</label>
+      <input id="mEspecie" type="text" placeholder="Ex: Solanum lycopersicum, Lactuca sativa..."/>
+      <div class="form-hint">Nome científico ou variedade específica</div>
+    </div>
+
+    <div class="form-group">
+      <label>Ícone</label>
+      <select id="mIcone">
+        <option value="🍅">🍅 Tomate</option>
+        <option value="🥬">🥬 Folhosa</option>
+        <option value="🌸">🌸 Flor</option>
+        <option value="🌵">🌵 Cacto</option>
+        <option value="🪴">🪴 Vaso</option>
+        <option value="🌿">🌿 Erva</option>
+        <option value="🫚">🫚 Oleaginosa</option>
+        <option value="🫘">🫘 Leguminosa</option>
+        <option value="🌾">🌾 Cereal</option>
+        <option value="🍋">🍋 Cítrica</option>
+        <option value="🌱">🌱 Muda</option>
+        <option value="🍃">🍃 Outra</option>
+      </select>
+    </div>
+
+    <div class="form-row">
+      <div class="form-group">
+        <label>Umidade mínima ideal (%)</label>
+        <input id="mMin" type="number" min="0" max="100" value="40" placeholder="40"/>
+      </div>
+      <div class="form-group">
+        <label>Umidade máxima ideal (%)</label>
+        <input id="mMax" type="number" min="0" max="100" value="70" placeholder="70"/>
+      </div>
+    </div>
+    <div class="form-hint" style="margin-top:-8px; margin-bottom:8px;">
+      Faixa ideal de umidade para esta espécie
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-green" onclick="salvarPlanta()">Salvar planta</button>
+    </div>
+  </div>
+</div>
+<script src="planta.js"></script>
+</body>
+</html>
